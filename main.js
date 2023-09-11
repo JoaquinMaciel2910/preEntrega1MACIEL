@@ -14,6 +14,10 @@ function obtenerJugadaComputadora() {
 }
 
 function determinarGanador(jugadaUsuario, jugadaComputadora) {
+    if (jugadaUsuario === jugadaComputadora) {
+        return "¡Es un empate!";
+    }
+
     switch (jugadaUsuario) {
         case "piedra":
             return jugadaComputadora === "tijera" ? "¡Ganaste!" : "¡Perdiste!";
@@ -22,7 +26,6 @@ function determinarGanador(jugadaUsuario, jugadaComputadora) {
         case "tijera":
             return jugadaComputadora === "papel" ? "¡Ganaste!" : "¡Perdiste!";
     }
-    return "¡Es un empate!";
 }
 
 function jugarPiedraPapelTijera() {
@@ -30,8 +33,8 @@ function jugarPiedraPapelTijera() {
         var jugadaUsuario = obtenerJugadaUsuario();
         var jugadaComputadora = obtenerJugadaComputadora();
         var resultado = determinarGanador(jugadaUsuario, jugadaComputadora);
-        alert("Vos elegiste: " + jugadaUsuario + "\nLa computadora eligió: " + jugadaComputadora + "\nResultado: " + resultado);
+        alert("Tú elegiste: " + jugadaUsuario + "\nLa computadora eligió: " + jugadaComputadora + "\nResultado: " + resultado);
     }
 }
 
-jugarPiedraPapelTijera(); 
+jugarPiedraPapelTijera();
