@@ -1,40 +1,81 @@
-function obtenerJugadaUsuario() {
-    var jugada = prompt("Elige: piedra, papel o tijera").toLowerCase();
-    if (jugada !== "piedra" && jugada !== "papel" && jugada !== "tijera") {
-        alert("Por favor, elige una opción válida.");
-        return obtenerJugadaUsuario();
+// Objeto para representar al jugador
+const jugador = {
+    nombre: "",
+    puntaje: 0,
+  };
+  
+  // Objeto para representar a la computadora
+  const computadora = {
+    nombre: "Computadora",
+    puntaje: 0,
+  };
+  
+  // Función para obtener la elección del jugador
+  function obtenerEleccionJugador() {
+    const opciones = ["piedra", "papel", "tijera"];
+    const eleccion = prompt("Elige piedra, papel o tijera:").toLowerCase();
+  
+    if (opciones.includes(eleccion)) {
+      return eleccion;
+    } else {
+      console.log("Elección inválida. Por favor, elige piedra, papel o tijera.");
+      return obtenerEleccionJugador();
     }
-    return jugada;
-}
-
-function obtenerJugadaComputadora() {
-    var opciones = ["piedra", "papel", "tijera"];
-    var indice = Math.floor(Math.random() * 3);
-    return opciones[indice];
-}
-
-function determinarGanador(jugadaUsuario, jugadaComputadora) {
-    if (jugadaUsuario === jugadaComputadora) {
-        return "¡Es un empate!";
+  }
+  
+  // Función para determinar el resultado del juego y actualizar puntajes
+  function jugarPiedraPapelTijera() {
+    let continuarJugando = true;
+    jugador.nombre = prompt("Ingresa tu nombre:");
+  
+    while (continuarJugando) {
+      const eleccionJugador = obtenerEleccionJugador();
+      const eleccionComputadora = obtenerEleccionComputadora();
+      console.log(`${jugador.nombre} eligió: ${eleccionJugador}`);
+      console.log(`${computadora.nombre} eligió: ${eleccionComputadora}`);
+      const resultado = determinarGanador(eleccionJugador, eleccionComputadora);
+      console.log(resultado);
+  
+      // Actualizar puntajes
+      if (resultado === "Ganaste") {
+        jugador.puntaje++;
+      } else if (resultado === "La computadora ganó") {
+        computadora.puntaje++;
+      }
+  
+      console.log(`${jugador.nombre}: ${jugador.puntaje} puntos`);
+      console.log(`${computadora.nombre}: ${computadora.puntaje} puntos`);
+  
+      const respuesta = prompt("¿Quieres jugar otra ronda? (s/n)").toLowerCase();
+      if (respuesta !== "s") {
+        continuarJugando = false;
+      }
     }
-
-    switch (jugadaUsuario) {
-        case "piedra":
-            return jugadaComputadora === "tijera" ? "¡Ganaste!" : "¡Perdiste!";
-        case "papel":
-            return jugadaComputadora === "piedra" ? "¡Ganaste!" : "¡Perdiste!";
-        case "tijera":
-            return jugadaComputadora === "papel" ? "¡Ganaste!" : "¡Perdiste!";
+    console.log("Gracias por jugar.");
+  }
+  
+  // Función para obtener la elección de la computadora de forma aleatoria
+  function obtenerEleccionComputadora() {
+    const opciones = ["piedra", "papel", "tijera"];
+    const eleccionAleatoria = opciones[Math.floor(Math.random() * 3)];
+    return eleccionAleatoria;
+  }
+  
+  // Función para determinar el resultado del juego
+  function determinarGanador(eleccionJugador, eleccionComputadora) {
+    if (eleccionJugador === eleccionComputadora) {
+      return "Empate";
+    } else if (
+      (eleccionJugador === "piedra" && eleccionComputadora === "tijera") ||
+      (eleccionJugador === "papel" && eleccionComputadora === "piedra") ||
+      (eleccionJugador === "tijera" && eleccionComputadora === "papel")
+    ) {
+      return "Ganaste";
+    } else {
+      return "La computadora ganó";
     }
-}
-
-function jugarPiedraPapelTijera() {
-    for (var i = 0; i < 3; i++) {
-        var jugadaUsuario = obtenerJugadaUsuario();
-        var jugadaComputadora = obtenerJugadaComputadora();
-        var resultado = determinarGanador(jugadaUsuario, jugadaComputadora);
-        alert("Tú elegiste: " + jugadaUsuario + "\nLa computadora eligió: " + jugadaComputadora + "\nResultado: " + resultado);
-    }
-}
-
-jugarPiedraPapelTijera();
+  }
+  
+  // Iniciar el juego
+  jugarPiedraPapelTijera();
+  
