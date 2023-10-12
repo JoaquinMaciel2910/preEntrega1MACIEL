@@ -1,105 +1,93 @@
-// Objeto para representar al jugador
-const jugador = {
-  nombre: "",
-  puntaje: 0,
-};
+const choices = document.querySelectorAll('.choice');
+const playerScoreSpan = document.getElementById('player-score');
+const computerScoreSpan = document.getElementById('computer-score');
+const resultText = document.getElementById('result-text');
+const restartButton = document.getElementById('restart-button');
 
-// Objeto para representar a la computadora
-const computadora = {
-  nombre: "Computadora",
-  puntaje: 0,
-};
+let playerScore = 0;
+let computerScore = 0;
 
-// Array para almacenar el historial de rondas
-const historial = [];
+choices.forEach(choice => {
+    choice.addEventListener('click', playGame);
+});
 
-// Función para obtener la elección del jugador
-function obtenerEleccionJugador() {
-  const opciones = ["piedra", "papel", "tijera"];
-  const eleccion = prompt("Elige piedra, papel o tijera:").toLowerCase();
-
-  if (opciones.includes(eleccion)) {
-    return eleccion;
-  } else {
-    console.log("Elección inválida. Por favor, elige piedra, papel o tijera.");
-    return obtenerEleccionJugador();
-  }
+function getComputerChoice() {
+    const choices = ['piedra', 'papel', 'tijera'];
+    const randomIndex = Math.floor(Math.random() * 3);
+    return choices[randomIndex];
 }
 
-// Función para determinar el resultado del juego y actualizar puntajes
-function jugarPiedraPapelTijera() {
-  let continuarJugando = true;
-  jugador.nombre = prompt("Ingresa tu nombre:");
+function playGame(e) {
+    const playerChoice = e.target.id;
+    const computerChoice = getComputerChoice();
 
-  while (continuarJugando) {
-    const eleccionJugador = obtenerEleccionJugador();
-    const eleccionComputadora = obtenerEleccionComputadora();
-    console.log(`${jugador.nombre} eligió: ${eleccionJugador}`);
-    console.log(`${computadora.nombre} eligió: ${eleccionComputadora}`);
-    const resultado = determinarGanador(eleccionJugador, eleccionComputadora);
-    console.log(resultado);
+    const winner = getWinner(playerChoice, computerChoice);
+    showResult(winner, computerChoice);
 
-    // Actualizar puntajes
-    if (resultado === "Ganaste") {
-      jugador.puntaje++;
-    } else if (resultado === "La computadora ganó") {
-      computadora.puntaje++;
+    if (winner === 'jugador') {
+        playerScore++;
+    } else if (winner === 'computadora') {
+        computerScore++;
     }
 
-    // Registrar la ronda en el historial
-    historial.push({
-      jugador: eleccionJugador,
-      computadora: eleccionComputadora,
-      resultado: resultado,
+    playerScoreSpan.textContent = playerScore;
+    computerScoreSpan.textContent = computerScore;
+
+    if (playerScore === 5) {
+        resultText.textContent = "¡GANASTE! ¿Quieres volver a jugar?";
+        restartButton.style.display = 'block';
+        disableChoices();
+    }
+    
+    if (computerScore === 5) {
+        resultText.textContent = "¡Perdiste! La computadora ganó. ¿Quieres volver a jugar?";
+        restartButton.style.display = 'block';
+        disableChoices();
+    }
+}
+
+function disableChoices() {
+    choices.forEach(choice => {
+        choice.removeEventListener('click', playGame);
     });
+}
 
-    console.log(`${jugador.nombre}: ${jugador.puntaje} puntos`);
-    console.log(`${computadora.nombre}: ${computadora.puntaje} puntos`);
+function resetGame() {
+    playerScore = 0;
+    computerScore = 0;
+    playerScoreSpan.textContent = playerScore;
+    computerScoreSpan.textContent = computerScore;
+    resultText.textContent = "¡Elige una opción!";
+    restartButton.style.display = 'none';
+    enableChoices();
+}
 
-    const respuesta = prompt("¿Quieres jugar otra ronda? (s/n)").toLowerCase();
-    if (respuesta !== "s") {
-      continuarJugando = false;
+function enableChoices() {
+    choices.forEach(choice => {
+        choice.addEventListener('click', playGame);
+    });
+}
+
+function getWinner(player, computer) {
+    if (player === computer) {
+        return 'empate';
+    } else if ((player === 'piedra' && computer === 'tijera') || 
+               (player === 'papel' && computer === 'piedra') || 
+               (player === 'tijera' && computer === 'papel')) {
+        return 'jugador';
+    } else {
+        return 'computadora';
     }
-  }
-
-  console.log("Gracias por jugar.");
-  mostrarHistorial();
 }
 
-// Función para mostrar el historial de rondas
-function mostrarHistorial() {
-  console.log("Historial de rondas:");
-  historial.forEach((ronda, indice) => {
-    console.log(`Ronda ${indice + 1}: ${ronda.jugador} vs ${ronda.computadora} - Resultado: ${ronda.resultado}`);
-  });
-
-  // Utilizar filter para filtrar las rondas ganadas por el jugador
-  const rondasGanadasPorJugador = historial.filter(ronda => ronda.resultado === "Ganaste");
-  console.log(`Rondas ganadas por ${jugador.nombre}: ${rondasGanadasPorJugador.length}`);
+function showResult(winner, computerChoice) {
+    if (winner === 'empate') {
+        resultText.textContent = `¡Es un empate! Ambos eligieron ${computerChoice}.`;
+    } else if (winner === 'jugador') {
+        resultText.textContent = `¡Ganaste! La computadora eligió ${computerChoice}.`;
+    } else {
+        resultText.textContent = `¡Perdiste! La computadora eligió ${computerChoice}.`;
+    }
 }
 
-// Función para obtener la elección de la computadora de forma aleatoria
-function obtenerEleccionComputadora() {
-  const opciones = ["piedra", "papel", "tijera"];
-  const eleccionAleatoria = opciones[Math.floor(Math.random() * 3)];
-  return eleccionAleatoria;
-}
-
-// Función para determinar el resultado del juego
-function determinarGanador(eleccionJugador, eleccionComputadora) {
-  if (eleccionJugador === eleccionComputadora) {
-    return "Empate";
-  } else if (
-    (eleccionJugador === "piedra" && eleccionComputadora === "tijera") ||
-    (eleccionJugador === "papel" && eleccionComputadora === "piedra") ||
-    (eleccionJugador === "tijera" && eleccionComputadora === "papel")
-  ) {
-    return "Ganaste";
-  } else {
-    return "La computadora ganó";
-  }
-}
-
-// Iniciar el juego
-jugarPiedraPapelTijera();
-  
+restartButton.addEventListener('click', resetGame);
