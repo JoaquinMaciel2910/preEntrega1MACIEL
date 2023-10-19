@@ -7,6 +7,17 @@ const restartButton = document.getElementById('restart-button');
 let playerScore = 0;
 let computerScore = 0;
 
+
+if (localStorage.getItem('playerScore')) {
+    playerScore = parseInt(localStorage.getItem('playerScore'));
+    playerScoreSpan.textContent = playerScore;
+}
+
+if (localStorage.getItem('computerScore')) {
+    computerScore = parseInt(localStorage.getItem('computerScore'));
+    computerScoreSpan.textContent = computerScore;
+}
+
 choices.forEach(choice => {
     choice.addEventListener('click', playGame);
 });
@@ -26,8 +37,10 @@ function playGame(e) {
 
     if (winner === 'jugador') {
         playerScore++;
+        localStorage.setItem('playerScore', playerScore);
     } else if (winner === 'computadora') {
         computerScore++;
+        localStorage.setItem('computerScore', computerScore);
     }
 
     playerScoreSpan.textContent = playerScore;
@@ -57,6 +70,8 @@ function resetGame() {
     computerScore = 0;
     playerScoreSpan.textContent = playerScore;
     computerScoreSpan.textContent = computerScore;
+    localStorage.setItem('playerScore', playerScore);
+    localStorage.setItem('computerScore', computerScore);
     resultText.textContent = "¡Elige una opción!";
     restartButton.style.display = 'none';
     enableChoices();
